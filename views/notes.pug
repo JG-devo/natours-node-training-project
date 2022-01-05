@@ -1,0 +1,37 @@
+doctype html
+html
+  head
+    // this comment appears in HTML
+    //- this one doesn't
+    //- interpolation which looks similar to ES6 template string
+    title Natours | #{tour}
+    link(rel='stylesheet' href='css/style.css')
+    link(rel='shortcut icon' type='image/png' href='img/favicon.png')
+  
+  body
+    //- the = needs to have a space. tour refers to the object on the 'base' route in app.js (known as buffered code)
+    h1= tour
+    //- We can also run simple JS code
+    h2= user.toUpperCase()
+
+    //- unbuffered code (something which doesn't add anything to the output)
+    - const x = 9;
+
+    //- buffered code again (which adds something to the output)
+    h2= 2 * x
+
+    p This is just some text
+
+    //- element with two classes
+    nav.nav.nav--tours
+
+    //- div doesn't require the word, just .className which auto creates div
+    .header__logo
+
+    //- The colon allows us to add a new line without having to indent
+    li
+      a(href='#') About Us
+
+    li: a(href='#') About Us
+
+    //- cmd shift p and type pug to beautify / fix indentation
