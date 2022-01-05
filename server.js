@@ -39,6 +39,8 @@ mongoose.connect(DB).then(() => console.log('DB connection successful'));
 // If using a local DB, you can replace (DB) with 'process.env.DATABASE_LOCAL'
 
 const port = process.env.PORT || 3000;
+
+// Mandatory to listen to port variable via env and not just a port number for Heroku
 const server = app.listen(port, () => {
   console.log(`App running on port ${port}...`);
 });
