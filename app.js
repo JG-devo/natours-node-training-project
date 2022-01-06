@@ -48,7 +48,54 @@ app.options('*', cors()); // options is the same as GET, PATCH, etc - just anoth
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Set security headers
-app.use(helmet()); // Put it in the beginning to make sure the headers are set
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'", 'data:', 'blob:', 'https:', 'ws:'],
+        baseUri: ["'self'"],
+        fontSrc: ["'self'", 'https:', 'data:'],
+        scriptSrc: [
+          "'self'",
+          'https:',
+          'http:',
+          'blob:',
+          'https://*.mapbox.com',
+          'https://js.stripe.com',
+          'https://m.stripe.network',
+          'https://*.cloudflare.com',
+        ],
+        frameSrc: ["'self'", 'https://js.stripe.com'],
+        objectSrc: ["'none'"],
+        styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
+        workerSrc: [
+          "'self'",
+          'data:',
+          'blob:',
+          'https://*.tiles.mapbox.com',
+          'https://api.mapbox.com',
+          'https://events.mapbox.com',
+          'https://m.stripe.network',
+        ],
+        childSrc: ["'self'", 'blob:'],
+        imgSrc: ["'self'", 'data:', 'blob:'],
+        formAction: ["'self'"],
+        connectSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          'data:',
+          'blob:',
+          'https://*.stripe.com',
+          'https://*.mapbox.com',
+          'https://*.cloudflare.com/',
+          'https://index.js:*',
+          'ws://127.0.0.1:*/',
+        ],
+        upgradeInsecureRequests: [],
+      },
+    },
+  })
+); // Put it in the beginning to make sure the headers are set
 
 // dev logging
 if (process.env.NODE_ENV === 'development') {
@@ -165,50 +212,3 @@ module.exports = app;
 // https://www.natours.dev/api/v1/tours
 
 // Manual CORS config that can be used with app.use(helmet(goes here))
-
-// {
-//   contentSecurityPolicy: {
-//     directives: {
-//       defaultSrc: ["'self'", 'data:', 'blob:', 'https:', 'ws:'],
-//       baseUri: ["'self'"],
-//       fontSrc: ["'self'", 'https:', 'data:'],
-//       scriptSrc: [
-//         "'self'",
-//         'https:',
-//         'http:',
-//         'blob:',
-//         'https://*.mapbox.com',
-//         'https://js.stripe.com',
-//         'https://m.stripe.network',
-//         'https://*.cloudflare.com',
-//       ],
-//       frameSrc: ["'self'", 'https://js.stripe.com'],
-//       objectSrc: ["'none'"],
-//       styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
-//       workerSrc: [
-//         "'self'",
-//         'data:',
-//         'blob:',
-//         'https://*.tiles.mapbox.com',
-//         'https://api.mapbox.com',
-//         'https://events.mapbox.com',
-//         'https://m.stripe.network',
-//       ],
-//       childSrc: ["'self'", 'blob:'],
-//       imgSrc: ["'self'", 'data:', 'blob:'],
-//       formAction: ["'self'"],
-//       connectSrc: [
-//         "'self'",
-//         "'unsafe-inline'",
-//         'data:',
-//         'blob:',
-//         'https://*.stripe.com',
-//         'https://*.mapbox.com',
-//         'https://*.cloudflare.com/',
-//         'https://index.js:*',
-//         'ws://127.0.0.1:*/',
-//       ],
-//       upgradeInsecureRequests: [],
-//     },
-//   },
-// }
