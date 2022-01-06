@@ -19,6 +19,8 @@ const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
 
+app.enable('trust proxy'); // For heroku to allow proxy forwarding, see authController createSendToken with x-forwarded-proto
+
 // SSR using pug templates (npm install pug)
 // set is for settings
 app.set('view engine', 'pug');

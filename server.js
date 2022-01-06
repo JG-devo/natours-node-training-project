@@ -57,3 +57,11 @@ process.on('unhandledRejection', err => {
     process.exit(1); // immediately turns off node, 0 would mean success, 1 would mean 'uncalled exception'
   });
 });
+
+process.on('SIGTERM', () => {
+  console.log('👍 SIGTERM RECEIVED. Shutting down gracefully');
+  server.close(() => {
+    // We don't need to shutdown manually as sigterm does that for us i.e. process.exit not required
+    console.log('💥 Process terminated!');
+  });
+});
