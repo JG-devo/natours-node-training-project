@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -28,6 +29,18 @@ app.set('views', path.join(__dirname, 'views')); // path is built in node module
 
 ////////////////////////////////////////////////////////////////////////
 // GLOBAL MIDDLEWARE (this is what the app.js file is mainly used for)
+// Implement CORS - simple usage i.e.GET and POST
+app.use(cors()); // Access-Control-Allow-Origin *
+
+// app.use(
+//   cors({
+//     origin: 'https://www.natours.com', // If the API is only to be used by our frontend app for example
+//   })
+// );
+
+// CORS preflight check (used for more complex calls like delete and patch)
+app.options('*', cors()); // options is the same as GET, PATCH, etc - just another verb based on the call type
+// app.options('/api/v1/tours/:id', cors()); // For specific routes for example
 
 // Serving static files
 // app.use(express.static(`${__dirname}/public`));
@@ -35,54 +48,7 @@ app.set('views', path.join(__dirname, 'views')); // path is built in node module
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Set security headers
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'", 'data:', 'blob:', 'https:', 'ws:'],
-        baseUri: ["'self'"],
-        fontSrc: ["'self'", 'https:', 'data:'],
-        scriptSrc: [
-          "'self'",
-          'https:',
-          'http:',
-          'blob:',
-          'https://*.mapbox.com',
-          'https://js.stripe.com',
-          'https://m.stripe.network',
-          'https://*.cloudflare.com',
-        ],
-        frameSrc: ["'self'", 'https://js.stripe.com'],
-        objectSrc: ["'none'"],
-        styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
-        workerSrc: [
-          "'self'",
-          'data:',
-          'blob:',
-          'https://*.tiles.mapbox.com',
-          'https://api.mapbox.com',
-          'https://events.mapbox.com',
-          'https://m.stripe.network',
-        ],
-        childSrc: ["'self'", 'blob:'],
-        imgSrc: ["'self'", 'data:', 'blob:'],
-        formAction: ["'self'"],
-        connectSrc: [
-          "'self'",
-          "'unsafe-inline'",
-          'data:',
-          'blob:',
-          'https://*.stripe.com',
-          'https://*.mapbox.com',
-          'https://*.cloudflare.com/',
-          'https://index.js:*',
-          'ws://127.0.0.1:*/',
-        ],
-        upgradeInsecureRequests: [],
-      },
-    },
-  })
-); // Put it in the beginning to make sure the headers are set
+app.use(helmet()); // Put it in the beginning to make sure the headers are set
 
 // dev logging
 if (process.env.NODE_ENV === 'development') {
@@ -197,3 +163,52 @@ app.use(globalErrorHandler);
 module.exports = app;
 
 // https://www.natours.dev/api/v1/tours
+
+// Manual CORS config that can be used with app.use(helmet(goes here))
+
+// {
+//   contentSecurityPolicy: {
+//     directives: {
+//       defaultSrc: ["'self'", 'data:', 'blob:', 'https:', 'ws:'],
+//       baseUri: ["'self'"],
+//       fontSrc: ["'self'", 'https:', 'data:'],
+//       scriptSrc: [
+//         "'self'",
+//         'https:',
+//         'http:',
+//         'blob:',
+//         'https://*.mapbox.com',
+//         'https://js.stripe.com',
+//         'https://m.stripe.network',
+//         'https://*.cloudflare.com',
+//       ],
+//       frameSrc: ["'self'", 'https://js.stripe.com'],
+//       objectSrc: ["'none'"],
+//       styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
+//       workerSrc: [
+//         "'self'",
+//         'data:',
+//         'blob:',
+//         'https://*.tiles.mapbox.com',
+//         'https://api.mapbox.com',
+//         'https://events.mapbox.com',
+//         'https://m.stripe.network',
+//       ],
+//       childSrc: ["'self'", 'blob:'],
+//       imgSrc: ["'self'", 'data:', 'blob:'],
+//       formAction: ["'self'"],
+//       connectSrc: [
+//         "'self'",
+//         "'unsafe-inline'",
+//         'data:',
+//         'blob:',
+//         'https://*.stripe.com',
+//         'https://*.mapbox.com',
+//         'https://*.cloudflare.com/',
+//         'https://index.js:*',
+//         'ws://127.0.0.1:*/',
+//       ],
+//       upgradeInsecureRequests: [],
+//     },
+//   },
+// }
