@@ -16,6 +16,7 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
+const bookingController = require('./controllers/bookingController');
 const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
@@ -111,6 +112,14 @@ const limiter = rateLimit({
 });
 
 app.use('/api', limiter);
+
+// Stripe Webhook - Done in app.js before body parsing to JSON because we need the data coming in to NOT be JSON format
+// it arrives here in a raw format
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout
+);
 
 // Body parser i.e. reading data from the body into req.body (10 kilobyte limit)
 app.use(
